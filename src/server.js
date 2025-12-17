@@ -1,0 +1,43 @@
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+import path from "path";
+
+dotenv.config();
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// DB Connection
+connectDB();
+
+// Routes
+import authRoutes from "./routes/authRoutes.js";
+import homeRoutes from "./routes/homeRoutes.js";
+import adsRoutes from "./routes/adsRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+
+app.use("/auth", authRoutes);
+app.use("/home", homeRoutes);
+app.use("/ads", adsRoutes);
+app.use("/category", categoryRoutes);
+app.use("/products", productRoutes);
+app.use("/users", userRoutes);
+
+// Static files for uploaded images/videos
+const __dirname = path.resolve();
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Upload routes
+app.use("/upload", uploadRoutes);
+
+// Start Server
+app.listen(process.env.PORT, () => {
+    console.log(`Server running on PORT ${process.env.PORT}`);
+});
