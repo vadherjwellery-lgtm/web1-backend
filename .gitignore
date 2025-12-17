@@ -1,3 +1,6 @@
+<<<<<<< HEAD
 node_modules
+=======
+>>>>>>> adf9a90 (Remove env secrets completely)
 .env
 .env.*
