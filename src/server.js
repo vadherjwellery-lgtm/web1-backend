@@ -11,11 +11,9 @@ const app = express();
 // Middleware
 // ==================
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://vadherjawellery.netlify.app"
-  ],
-  credentials: true
+  origin: "https://vadherjawellery.netlify.app",
+  credentials: true,
+  methods: ["GET", "POST"],
 }));
 
 app.use(express.json());
