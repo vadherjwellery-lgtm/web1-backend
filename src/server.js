@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import path from "path";
+import session from "express-session";
+import passport from "./config/passport.js";
 
 dotenv.config();
 const app = express();
@@ -11,20 +13,30 @@ const app = express();
 // Middleware
 // ==================
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://vadherjawellery.netlify.app"
-  ],
-  credentials: true
+  origin: "https://vadherjawellery.netlify.app",
+  credentials: true,
+  methods: ["GET", "POST"],
 }));
 
-// app.use(cors({
-//   origin: "https://vadherjawellery.netlify.app",
-//   credentials: true,
-//   methods: ["GET", "POST"],
-// }));
-
 app.use(express.json());
+
+// Session middleware for Passport
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: true,
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // ==================
 // DB Connection
