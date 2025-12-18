@@ -15,8 +15,7 @@ app.use(cors({
     "http://localhost:3000",
     "https://vadherjawellery.netlify.app"
   ],
-  credentials: true,
-  methods: ["GET", "POST"],
+  credentials: true
 }));
 
 // app.use(cors({
