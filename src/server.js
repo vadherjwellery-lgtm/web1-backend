@@ -3,8 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import path from "path";
-import passport from "passport";
-import "./config/passport.js";
 
 dotenv.config();
 const app = express();
@@ -21,7 +19,6 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(passport.initialize());
 
 // ==================
 // DB Connection
