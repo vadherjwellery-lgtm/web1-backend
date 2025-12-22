@@ -29,13 +29,23 @@ router.get(
         { expiresIn: "7d" }
       );
 
-      // Redirect to frontend with token
+      // Prepare user data for frontend
+      const userData = {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        picture: req.user.picture,
+        role: req.user.role
+      };
+
+      // Redirect to frontend with token and user data
+      const userParam = encodeURIComponent(JSON.stringify(userData));
       res.redirect(
-        `https://vadherjawellery.netlify.app/login-success?token=${token}`
+        `https://vadherjawellery.netlify.app/auth/callback?token=${token}&user=${userParam}`
       );
     } catch (err) {
       console.log(err);
-      res.redirect("https://vadherjawellery.netlify.app/login-failed");
+      res.redirect("https://vadherjawellery.netlify.app/auth/callback?error=" + encodeURIComponent("Login failed. Please try again."));
     }
   }
 );
