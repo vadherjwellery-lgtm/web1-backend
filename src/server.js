@@ -20,8 +20,17 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// Express 5 catch-all for preflight: named param with "*" modifier
-app.options("/:path*", cors(corsOptions));
+// Handle preflight without path-to-regexp wildcards
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", corsOptions.origin);
+    res.header("Access-Control-Allow-Methods", corsOptions.methods.join(","));
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Credentials", "true");
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 app.use(express.json());
 
