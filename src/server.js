@@ -8,6 +8,7 @@ import passport from "./config/passport.js";
 
 dotenv.config();
 const app = express();
+app.set("trust proxy", 1); // required for secure cookies behind proxies (e.g., Render)
 
 // ==================
 // Middleware
@@ -27,9 +28,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     },
   })
