@@ -20,8 +20,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// Express 5 path-to-regexp rejects "*" and "/*"; use "(.*)" wildcard
-app.options("(.*)", cors(corsOptions));
+// Express 5 catch-all for preflight: named param with "*" modifier
+app.options("/:path*", cors(corsOptions));
 
 app.use(express.json());
 
