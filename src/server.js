@@ -13,11 +13,14 @@ app.set("trust proxy", 1); // required for secure cookies behind proxies (e.g., 
 // ==================
 // Middleware
 // ==================
-app.use(cors({
+const corsOptions = {
   origin: "https://vadherjawellery.netlify.app",
   credentials: true,
-  methods: ["GET", "POST"],
-}));
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
