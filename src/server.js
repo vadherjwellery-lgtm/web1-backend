@@ -20,8 +20,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// Express 5 no longer accepts bare "*" for path; use wildcard pattern.
-app.options("/*", cors(corsOptions));
+// Express 5 path-to-regexp rejects "*" and "/*"; use "(.*)" wildcard
+app.options("(.*)", cors(corsOptions));
 
 app.use(express.json());
 
