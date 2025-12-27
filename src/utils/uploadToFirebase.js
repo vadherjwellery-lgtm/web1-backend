@@ -1,14 +1,21 @@
-// Local upload helper replacing old Firebase upload logic
-// Expects a multer-file object and returns the stored file path/URL
+// Convert uploaded file buffer to base64 data URL for database storage
+// This ensures images persist in MongoDB instead of ephemeral file system
 
 const uploadToFirebase = async (file) => {
-  if (!file) return null;
+  if (!file || !file.buffer) return null;
 
-  // Since multer already stored the file on disk, we just expose metadata here.
-  const relativePath = file.path.replace(/\\/g, "/");
-  const url = `/uploads/${relativePath.split("uploads/")[1]}`;
+  try {
+    // Convert buffer to base64
+    const base64Data = file.buffer.toString('base64');
 
-  return { path: relativePath, url };
+    // Create data URL with proper MIME type
+    const dataUrl = `data:${file.mimetype};base64,${base64Data}`;
+
+    return { url: dataUrl };
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return null;
+  }
 };
 
 export default uploadToFirebase;

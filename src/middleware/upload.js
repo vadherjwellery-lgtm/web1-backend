@@ -1,34 +1,7 @@
 import multer from "multer";
-import fs from "fs";
-import path from "path";
 
-const ensureDirExists = (dirPath) => {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
-  }
-};
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let folder = "others";
-
-    if (file.mimetype.startsWith("image/")) {
-      folder = "images";
-    } else if (file.mimetype.startsWith("video/")) {
-      folder = "videos";
-    }
-
-    const uploadPath = path.join("uploads", folder);
-    ensureDirExists(uploadPath);
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    const timestamp = Date.now();
-    const ext = path.extname(file.originalname);
-    const baseName = path.basename(file.originalname, ext).replace(/\s+/g, "-");
-    cb(null, `${baseName}-${timestamp}${ext}`);
-  },
-});
+// Use memory storage instead of disk storage for base64 conversion
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
@@ -38,6 +11,13 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ storage, fileFilter });
+// Increase file size limit for base64 storage (5MB max)
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB
+  }
+});
 
 export default upload;

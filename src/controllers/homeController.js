@@ -35,8 +35,8 @@ export const createHomeImage = async (req, res) => {
       return res.status(400).json({ success: false, message: "Image is required" });
     }
 
-    const relativePath = req.file.path.replace(/\\/g, "/");
-    const imageUrl = `/uploads/${relativePath.split("uploads/")[1]}`;
+    const base64Data = req.file.buffer.toString('base64');
+    const imageUrl = `data:${req.file.mimetype};base64,${base64Data}`;
 
     const image = await HomeImage.create({ imageUrl });
     res.status(201).json({ success: true, data: image });
@@ -54,8 +54,8 @@ export const updateHomeImage = async (req, res) => {
       return res.status(400).json({ success: false, message: "Image is required" });
     }
 
-    const relativePath = req.file.path.replace(/\\/g, "/");
-    const imageUrl = `/uploads/${relativePath.split("uploads/")[1]}`;
+    const base64Data = req.file.buffer.toString('base64');
+    const imageUrl = `data:${req.file.mimetype};base64,${base64Data}`;
 
     const image = await HomeImage.findByIdAndUpdate(
       id,
@@ -134,8 +134,8 @@ export const uploadStoryImage = async (req, res) => {
       return res.status(400).json({ success: false, message: "Position must be 1, 2, or 3" });
     }
 
-    const relativePath = req.file.path.replace(/\\/g, "/");
-    const imageUrl = `/uploads/${relativePath.split("uploads/")[1]}`;
+    const base64Data = req.file.buffer.toString('base64');
+    const imageUrl = `data:${req.file.mimetype};base64,${base64Data}`;
 
     // Upsert - update if exists, insert if not
     const storyImage = await StoryImage.findOneAndUpdate(
@@ -184,8 +184,8 @@ export const uploadHomeVideo = async (req, res) => {
       return res.status(400).json({ success: false, message: "Video is required" });
     }
 
-    const relativePath = req.file.path.replace(/\\/g, "/");
-    const videoUrl = `/uploads/${relativePath.split("uploads/")[1]}`;
+    const base64Data = req.file.buffer.toString('base64');
+    const videoUrl = `data:${req.file.mimetype};base64,${base64Data}`;
     const title = req.body.title || "Featured Video";
 
     // Deactivate any existing videos
@@ -233,8 +233,8 @@ export const uploadTypeStripImage = async (req, res) => {
       return res.status(400).json({ success: false, message: "Image is required" });
     }
 
-    const relativePath = req.file.path.replace(/\\/g, "/");
-    const imageUrl = `/uploads/${relativePath.split("uploads/")[1]}`;
+    const base64Data = req.file.buffer.toString('base64');
+    const imageUrl = `data:${req.file.mimetype};base64,${base64Data}`;
 
     // Deactivate any existing images
     await TypeStripImage.updateMany({}, { isActive: false });

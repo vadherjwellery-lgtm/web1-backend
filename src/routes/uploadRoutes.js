@@ -9,8 +9,9 @@ router.post("/single", upload.single("file"), (req, res) => {
     return res.status(400).json({ success: false, message: "No file uploaded" });
   }
 
-  // Public URL path to access the file
-  const fileUrl = `/uploads/${req.file.path.split("uploads")[1].replace(/\\/g, "/")}`;
+  // Convert to base64 data URL
+  const base64Data = req.file.buffer.toString('base64');
+  const fileUrl = `data:${req.file.mimetype};base64,${base64Data}`;
 
   res.json({
     success: true,
@@ -18,7 +19,6 @@ router.post("/single", upload.single("file"), (req, res) => {
       originalName: req.file.originalname,
       mimeType: req.file.mimetype,
       size: req.file.size,
-      path: req.file.path,
       url: fileUrl,
     },
   });

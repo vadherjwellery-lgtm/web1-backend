@@ -121,8 +121,9 @@ export const createProduct = async (req, res) => {
       return res.status(400).json({ success: false, message: "Image is required" });
     }
 
-    const relativePath = req.file.path.replace(/\\/g, "/");
-    const imageUrl = `/uploads/${relativePath.split("uploads/")[1]}`;
+    // Convert image buffer to base64 data URL
+    const base64Data = req.file.buffer.toString('base64');
+    const imageUrl = `data:${req.file.mimetype};base64,${base64Data}`;
 
     const product = await Product.create({
       name,
@@ -160,8 +161,9 @@ export const updateProduct = async (req, res) => {
     };
 
     if (req.file) {
-      const relativePath = req.file.path.replace(/\\/g, "/");
-      updateData.imageUrl = `/uploads/${relativePath.split("uploads/")[1]}`;
+      // Convert new image to base64 data URL
+      const base64Data = req.file.buffer.toString('base64');
+      updateData.imageUrl = `data:${req.file.mimetype};base64,${base64Data}`;
     }
 
     const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
