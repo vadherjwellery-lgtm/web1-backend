@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import compression from "compression";
 import connectDB from "./config/db.js";
 import path from "path";
 import session from "express-session";
@@ -31,6 +32,17 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+// Enable compression for all responses
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  },
+  level: 6 // Compression level (0-9, 6 is default)
+}));
 
 app.use(express.json());
 

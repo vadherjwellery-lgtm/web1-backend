@@ -3,11 +3,17 @@ import Product from "../models/productModel.js";
 export const getProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100); // Cap at 100 to prevent memory issues
     const skip = (page - 1) * limit;
 
+    // Use lean() for better performance and select only necessary fields initially
     const [items, total] = await Promise.all([
-      Product.find({}).populate("category").skip(skip).limit(limit),
+      Product.find({})
+        .populate("category", "name") // Only populate category name, not all fields
+        .sort({ createdAt: -1 }) // Add explicit sorting
+        .skip(skip)
+        .limit(limit)
+        .lean(), // Convert to plain JavaScript objects for better performance
       Product.countDocuments({}),
     ]);
 
@@ -30,7 +36,9 @@ export const getProducts = async (req, res) => {
 export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById(id).populate("category");
+    const product = await Product.findById(id)
+      .populate("category", "name")
+      .lean();
 
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found" });
@@ -47,13 +55,18 @@ export const getProductsByCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
     const skip = (page - 1) * limit;
 
     const filter = { category: categoryId };
 
     const [items, total] = await Promise.all([
-      Product.find(filter).populate("category").skip(skip).limit(limit),
+      Product.find(filter)
+        .populate("category", "name")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
       Product.countDocuments(filter),
     ]);
 
@@ -82,14 +95,19 @@ export const searchProducts = async (req, res) => {
     }
 
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
     const skip = (page - 1) * limit;
 
     const regex = new RegExp(q, "i");
     const filter = { name: regex };
 
     const [items, total] = await Promise.all([
-      Product.find(filter).populate("category").skip(skip).limit(limit),
+      Product.find(filter)
+        .populate("category", "name")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
       Product.countDocuments(filter),
     ]);
 
