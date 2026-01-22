@@ -4,7 +4,7 @@ import Product from "../models/productModel.js";
 export const getCategories = async (req, res) => {
   try {
     const categories = await Category.find({}).sort({ createdAt: -1 }).lean();
-
+    //snsn
     // Fetch counts for each category
     const categoriesWithCounts = await Promise.all(
       categories.map(async (cat) => {
