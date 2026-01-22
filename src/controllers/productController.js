@@ -101,6 +101,11 @@ export const searchProducts = async (req, res) => {
     const regex = new RegExp(q, "i");
     const filter = { name: regex };
 
+    // Support searching within a category
+    if (req.query.category && req.query.category !== 'all') {
+      filter.category = req.query.category;
+    }
+
     const [items, total] = await Promise.all([
       Product.find(filter)
         .populate("category", "name")

@@ -1,9 +1,19 @@
 import Category from "../models/categoryModel.js";
+import Product from "../models/productModel.js";
 
 export const getCategories = async (req, res) => {
   try {
-    const categories = await Category.find({}).sort({ createdAt: -1 });
-    res.json({ success: true, data: categories });
+    const categories = await Category.find({}).sort({ createdAt: -1 }).lean();
+
+    // Fetch counts for each category
+    const categoriesWithCounts = await Promise.all(
+      categories.map(async (cat) => {
+        const count = await Product.countDocuments({ category: cat._id });
+        return { ...cat, productCount: count };
+      })
+    );
+
+    res.json({ success: true, data: categoriesWithCounts });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Failed to get categories" });
